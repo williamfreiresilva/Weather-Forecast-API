@@ -1,25 +1,22 @@
+# since Open Weather Map requires longitude and latitude input, you can use geocoding to get that info
+# City names and codes: http://bulk.openweathermap.org/sample/city.list.json.gz
+# API link: https://openweathermap.org/api/geocoding-api
+# create a function that receives city, metric, and your API key.
+# API key should be insertid in the function as default
+# get your API key at: https://openweathermap.org/api
+
 import requests
 
-# create a function that receives a coutry's acronym, not case sensitive, and your API key.
-# API key should be insertid in the function as default
-# get your API key at: https://newsapi.org
-def get_news(country,api_key='<yout API key from: https://newsapi.org'):
-  url = f'https://newsapi.org/v2/top-headlines?country={country}&apiKey={api_key}'
+def get_weather(city, units='metric', api_key='d1dae41af2003eafdb561323098db3b6'):
+  url = f"http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api_key}&units={units}"
   r = requests.get(url)
   content = r.json()
-  articles = content['articles']
-  results = []
-  
-  # loop through each article and append them to results[]
-  for article in articles:
-    results.append(f"\nTITLE\n {article['title']} \n\nDESCRIPTION\n {article['description']} \n" + len(article['description'])*'_')
+# best way to understand the API is by including a return statment and placing a break point to execute the debugger.
+  with open('data.txt', 'a') as file:
+    city_name = content['city']['name']
+    for item in content['list']:
+      file.write(f"{city_name},{item['dt_txt']}, {item['main']['temp']}, {item['weather'][0]['description']}\n")
 
-  # if you return results, you won't get your escape characters to work
-  # while loop to print each result individualy to make use of escape characters for aesthetics
-  count = 0
-  while count < (len(results) - 1):
-    print(results[count])
-    count = count + 1
-    
-# summon function for USA headlines
-print(get_news(country='us'))
+print(get_weather(city='Brasília'))
+
+
